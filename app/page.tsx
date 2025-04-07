@@ -1,9 +1,239 @@
-import Image from "next/image";
+"use client";
+import { useState } from 'react';
+import Head from 'next/head';
+import ImageUploader from '../components/ImageUploader';
+import PlatformSelector from '../components/PlatformSelector';
+import ImagePreview from '../components/ImagePreview';
+import ConvertedImages from '../components/ConvertedImages';
+import { Platform, ConvertedImage } from '../../types';
+
+const platforms: Platform[] = [
+  {
+    id: 'twitter',
+    name: 'X (formerly Twitter)',
+    icon: 'IconBrandX',
+    aspectRatios: [
+      {
+        name: 'Standard Post',
+        width: 1200,
+        height: 675,
+        ratio: '16:9',
+        maxFileSize: '5MB (15MB for GIFs on web)'
+      }
+    ]
+  },
+  {
+    id: 'linkedin',
+    name: 'LinkedIn',
+    icon: 'IconBrandLinkedin',
+    aspectRatios: [
+      {
+        name: 'Shared Image/Post',
+        width: 1200,
+        height: 627,
+        ratio: '1.91:1',
+        maxFileSize: '5MB (JPEG, PNG, GIF)'
+      },
+      {
+        name: 'Company Page Hero',
+        width: 1128,
+        height: 191,
+        ratio: '5.9:1',
+        maxFileSize: '5MB (JPEG, PNG, GIF)'
+      }
+    ]
+  },
+  {
+    id: 'instagram',
+    name: 'Instagram',
+    icon: 'IconBrandInstagram',
+    aspectRatios: [
+      {
+        name: 'Square Post',
+        width: 1080,
+        height: 1080,
+        ratio: '1:1',
+        maxFileSize: '30MB'
+      },
+      {
+        name: 'Portrait Post',
+        width: 1080,
+        height: 1350,
+        ratio: '4:5',
+        maxFileSize: '30MB'
+      },
+      {
+        name: 'Landscape Post',
+        width: 1080,
+        height: 566,
+        ratio: '1.91:1',
+        maxFileSize: '30MB'
+      }
+    ]
+  },
+  {
+    id: 'facebook',
+    name: 'Facebook',
+    icon: 'IconBrandFacebook',
+    aspectRatios: [
+      {
+        name: 'Shared Image/Post',
+        width: 1200,
+        height: 630,
+        ratio: '1.91:1',
+        maxFileSize: '30MB'
+      },
+      {
+        name: 'Square Post',
+        width: 1080,
+        height: 1080,
+        ratio: '1:1',
+        maxFileSize: '30MB'
+      }
+    ]
+  }
+];
 
 export default function Home() {
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [convertedImages, setConvertedImages] = useState<ConvertedImage[]>([]);
+  const [isConverting, setIsConverting] = useState(false);
+
+  const handleImagesUploaded = (images: string[]) => {
+    setUploadedImages(images);
+    // Reset converted images when new images are uploaded
+    setConvertedImages([]);
+  };
+
+  const handlePlatformsSelected = (platformIds: string[]) => {
+    setSelectedPlatforms(platformIds);
+    // Reset converted images when platforms selection changes
+    setConvertedImages([]);
+  };
+
+  const handleConvertImages = async () => {
+    if (uploadedImages.length === 0 || selectedPlatforms.length === 0) return;
+    
+    setIsConverting(true);
+    const newConvertedImages: ConvertedImage[] = [];
+    
+    try {
+      for (const imageUrl of uploadedImages) {
+        // Load image
+        const sourceImage = await new Promise<HTMLImageElement>((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.src = imageUrl;
+        });
+        
+        // Convert for each selected platform and its aspect ratios
+        for (const platformId of selectedPlatforms) {
+          const platform = platforms.find(p => p.id === platformId);
+          if (!platform) continue;
+          
+          for (const aspectRatio of platform.aspectRatios) {
+            const resizedDataUrl = await resizeImage(
+              sourceImage,
+              aspectRatio.width,
+              aspectRatio.height
+            );
+            
+            newConvertedImages.push({
+              platformId,
+              aspectRatioName: aspectRatio.name,
+              dataUrl: resizedDataUrl,
+              width: aspectRatio.width,
+              height: aspectRatio.height
+            });
+          }
+        }
+      }
+      
+      setConvertedImages(newConvertedImages);
+    } catch (error) {
+      console.error('Error converting images:', error);
+    } finally {
+      setIsConverting(false);
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-   
+    <div className="min-h-screen bg-gray-50">
+      <Head>
+        <title>Social Media Image Converter</title>
+        <meta name="description" content="Convert images for various social media platforms" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-center mb-8">Social Media Image Converter</h1>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            <ImageUploader onImagesUploaded={handleImagesUploaded} />
+            <PlatformSelector 
+              platforms={platforms} 
+              selectedPlatforms={selectedPlatforms}
+              onPlatformsSelected={handlePlatformsSelected} 
+            />
+            
+            {uploadedImages.length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-xl font-semibold mb-3">Preview Original Images</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {uploadedImages.map((image, index) => (
+                    <ImagePreview key={index} imageUrl={image} />
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {uploadedImages.length > 0 && selectedPlatforms.length > 0 && (
+              <button
+                onClick={handleConvertImages}
+                disabled={isConverting}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors disabled:bg-blue-400"
+              >
+                {isConverting ? 'Converting...' : 'Convert Images'}
+              </button>
+            )}
+          </div>
+          
+          <div>
+            {convertedImages.length > 0 && (
+              <ConvertedImages 
+                convertedImages={convertedImages} 
+                platforms={platforms} 
+              />
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
+}
+async function resizeImage(sourceImage: HTMLImageElement, width: number, height: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    try {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        throw new Error('Canvas context is not available');
+      }
+
+      // Set canvas dimensions
+      canvas.width = width;
+      canvas.height = height;
+
+      // Draw the source image onto the canvas with the new dimensions
+      ctx.drawImage(sourceImage, 0, 0, width, height);
+
+      // Convert the canvas content to a data URL
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8); // Adjust quality if needed
+      resolve(dataUrl);
+    } catch (error) {
+      reject(error);
+    }
+  });
 }
