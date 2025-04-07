@@ -42,14 +42,14 @@ const ConvertedImages: React.FC<ConvertedImagesProps> = ({ convertedImages, plat
 
   return (
     <div className="bg-white rounded-lg border p-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex lg:flex-row flex-col  justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-black">Converted Images</h2>
         
         <div className="flex items-center gap-3">
           <select
             value={selectedPlatform || ''}
             onChange={(e) => setSelectedPlatform(e.target.value || null)}
-            className="border rounded-md px-2 py-1 text-sm"
+            className="border rounded-md px-2 py-1 text-sm text-black"
           >
             <option value="">All Platforms</option>
             {platforms
