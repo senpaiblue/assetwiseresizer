@@ -5,7 +5,7 @@ import ImageUploader from '../components/ImageUploader';
 import PlatformSelector from '../components/PlatformSelector';
 import ImagePreview from '../components/ImagePreview';
 import ConvertedImages from '../components/ConvertedImages';
-import { Platform, ConvertedImage } from '../../types/index';
+import { Platform, ConvertedImage } from '../types/index';
 
 const platforms: Platform[] = [
   {

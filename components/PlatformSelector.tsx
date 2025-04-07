@@ -1,5 +1,5 @@
 "use client";
-import { Platform } from '../../types/index';
+import { Platform } from '../types/index';
 import { 
   IconBrandX, 
   IconBrandLinkedin, 
