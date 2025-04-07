@@ -213,7 +213,7 @@ export default function Home() {
     </div>
   );
 }
-async function resizeImage(sourceImage: HTMLImageElement, width: number, height: number): Promise<string> {
+async function resizeImage(sourceImage: HTMLImageElement, targetWidth: number, targetHeight: number): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
       const canvas = document.createElement('canvas');
@@ -222,15 +222,37 @@ async function resizeImage(sourceImage: HTMLImageElement, width: number, height:
         throw new Error('Canvas context is not available');
       }
 
-      // Set canvas dimensions
-      canvas.width = width;
-      canvas.height = height;
-
-      // Draw the source image onto the canvas with the new dimensions
-      ctx.drawImage(sourceImage, 0, 0, width, height);
+      // Set canvas dimensions to the target size
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      
+      // Calculate source and target aspect ratios
+      const sourceAspect = sourceImage.width / sourceImage.height;
+      const targetAspect = targetWidth / targetHeight;
+      
+      // Variables for source drawing area
+      let sx = 0, sy = 0, sWidth = sourceImage.width, sHeight = sourceImage.height;
+      
+      // Apply cropping strategy based on aspect ratios
+      if (sourceAspect > targetAspect) {
+        // Source is wider than target - crop sides
+        sWidth = sourceImage.height * targetAspect;
+        sx = (sourceImage.width - sWidth) / 2;
+      } else if (sourceAspect < targetAspect) {
+        // Source is taller than target - crop top/bottom
+        sHeight = sourceImage.width / targetAspect;
+        sy = (sourceImage.height - sHeight) / 2;
+      }
+      
+      // Draw the properly cropped image to the canvas
+      ctx.drawImage(
+        sourceImage,
+        sx, sy, sWidth, sHeight,  // Source rectangle
+        0, 0, targetWidth, targetHeight  // Destination rectangle
+      );
 
       // Convert the canvas content to a data URL
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.8); // Adjust quality if needed
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.9); // Slightly higher quality
       resolve(dataUrl);
     } catch (error) {
       reject(error);
