@@ -10,7 +10,7 @@ import { Platform, ConvertedImage } from '../types/index';
 const platforms: Platform[] = [
   {
     id: 'twitter',
-    name: 'X (formerly Twitter)',
+    name: 'Twitter',
     icon: 'IconBrandX',
     aspectRatios: [
       {

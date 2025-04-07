@@ -66,7 +66,7 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({
       
       {selectedPlatforms.length > 0 && (
         <div className="mt-4">
-          <h3 className="font-medium text-sm mb-2">Aspect Ratios:</h3>
+          <h3 className="font-medium text-sm mb-2 text-black">Aspect Ratios:</h3>
           <div className="text-xs text-gray-600 space-y-2">
             {platforms
               .filter(platform => selectedPlatforms.includes(platform.id))
