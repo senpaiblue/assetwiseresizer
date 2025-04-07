@@ -167,7 +167,7 @@ export default function Home() {
       </Head>
 
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">Social Media Image Converter</h1>
+        <h1 className="text-3xl font-bold text-black text-center mb-8">Social Media Image Converter</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="space-y-6">
@@ -180,7 +180,7 @@ export default function Home() {
             
             {uploadedImages.length > 0 && (
               <div className="mt-6">
-                <h2 className="text-xl font-semibold mb-3">Preview Original Images</h2>
+                <h2 className="text-xl text-black font-semibold mb-3">Preview Original Images</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {uploadedImages.map((image, index) => (
                     <ImagePreview key={index} imageUrl={image} />

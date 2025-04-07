@@ -43,7 +43,7 @@ const ConvertedImages: React.FC<ConvertedImagesProps> = ({ convertedImages, plat
   return (
     <div className="bg-white rounded-lg border p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Converted Images</h2>
+        <h2 className="text-xl font-semibold text-black">Converted Images</h2>
         
         <div className="flex items-center gap-3">
           <select
@@ -72,7 +72,7 @@ const ConvertedImages: React.FC<ConvertedImagesProps> = ({ convertedImages, plat
       
       {Object.entries(groupedByPlatform).map(([platformId, images]) => (
         <div key={platformId} className="mb-8">
-          <h3 className="font-medium text-lg mb-3">{getPlatformName(platformId)}</h3>
+          <h3 className="font-medium text-black text-lg mb-3">{getPlatformName(platformId)}</h3>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {images.map((image, index) => (

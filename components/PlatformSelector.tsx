@@ -43,7 +43,7 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-semibold mb-3">Select Platforms</h2>
+      <h2 className="text-xl font-semibold mb-3 text-black">Select Platforms</h2>
       
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {platforms.map((platform) => (
@@ -56,10 +56,10 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
-            <div className="text-2xl mb-2">
+            <div className="text-2xl text-black mb-2">
               {getIcon(platform.icon)}
             </div>
-            <span className="text-sm font-medium">{platform.name}</span>
+            <span className="text-sm text-black font-medium">{platform.name}</span>
           </button>
         ))}
       </div>

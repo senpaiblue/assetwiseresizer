@@ -75,7 +75,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUploaded }) => {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-semibold mb-3">Upload Images</h2>
+      <h2 className="text-xl font-semibold mb-3 text-black ">Upload Images</h2>
       
       <div
         className={`border-2 border-dashed p-6 rounded-lg text-center ${
