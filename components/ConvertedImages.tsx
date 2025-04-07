@@ -1,6 +1,6 @@
 "use client";
 import { useState } from 'react';
-import { ConvertedImage, Platform } from '../../types';
+import { ConvertedImage, Platform } from '../../types/index';
 import { saveAs } from 'file-saver';
 
 interface ConvertedImagesProps {
